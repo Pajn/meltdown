@@ -1,31 +1,28 @@
-# React Typescript boilerplate
+# Meltdown editor
 
-## Commands
+Why worry about style and format when typing your documents?
+Meltdown lets you write your document in markdown so that you only have your text
+and basic structure at hand while typing, and then style and format your document
+when you are about to release it.
+
+## Todo
+This is currently a work in progress and there are a lot of things to do before
+it's usable, some of these are:
+
+- Add support for multiple files
+- Add exports to things like pdf, html and docx
+- Handle images
+- Support saving and loading from some online service
+- Support comments on the text
+- Live editing the same document with multiple users
+
+## Contributing
+
+### Commands
+- `npm install` - Install dependencies and perform initial setups
 - `npm start` - Starts a dev server on <http://localhost:8080> with hot loading
 - `npm run build` - Does a production build in dist
 - `npm run lint` - Runs the linter to check for style issues
 - `npm run typescript` - Runs typescript to check for typing issues
 - `npm run test` - Runs tests
 - `npm run build_dev` - Does a development build but outputs to dist
-
-## Included packages
-- React 0.14
-- React Router 2.0
-- Redux 3.3
-
-## Build steps
-### Development
-1. Compiles with Typescript to ES6
-1. Compiles with Babel to ES5
-1. Adds react-hot for hot loading of components
-
-### Production
-1. Compiles with Typescript to ES6
-1. Compiles with Babel to ES5
-1. Minifies with UglifyJS
-
-## Branding
-Names should be set in:
-1. title in index.html
-1. name, description, urls in package.json
-1. names, urls in deploy.sh
