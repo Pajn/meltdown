@@ -3,7 +3,7 @@ import {render} from 'react-dom'
 import {Provider} from 'react-redux'
 import {hashHistory, IndexRoute, Router, Route} from 'react-router'
 import {Document} from './components/document'
-import {Files} from './components/files'
+import {FileOrDirectory} from './components/file'
 import {store} from './lib/store'
 
 const fill = {width: '100%', height: '100%'}
@@ -16,8 +16,8 @@ const App = ({children}) =>
 export function routes() {
   return (
     <Route path='/' component={App}>
-      <IndexRoute component={Files} />
-      <Route path='/file/:slug' component={Document} />
+      <IndexRoute component={FileOrDirectory} />
+      <Route path='/file/:path*' component={FileOrDirectory} />
     </Route>
   )
 }
