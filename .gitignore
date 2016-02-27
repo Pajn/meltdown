@@ -1,0 +1,6 @@
+.idea/
+.ts/
+dist/
+node_modules/
+typings/tsd.d.ts
+tsconfig.json
