@@ -1,4 +1,5 @@
 # Meltdown editor
+[![Stories in Ready](https://badge.waffle.io/Pajn/meltdown.png?label=ready&title=Ready)](https://waffle.io/Pajn/meltdown)
 
 Why worry about style and format when typing your documents?
 Meltdown lets you write your document in markdown so that you only have your text
