@@ -4,7 +4,7 @@ import * as React from 'react'
 import {connect} from 'react-redux'
 import withState from 'recompose/withState'
 import {compose} from 'redux'
-import {cancelComment, CreateComment, EditorChanged} from '../actions/document'
+import {cancelComment, CreateComment, EditorChanged, FocusComment} from '../actions/document'
 import {getCurrentRow} from '../lib/ui/editor-syntax-highlighting'
 import {Comment} from '../lib/entities'
 import {CommentBox} from './comment-box'
@@ -38,7 +38,7 @@ type InnerProps = Properties & {
   editorChanged: (editor: EditorState) => void
   cancelComment: () => void
   createComment: (text: string) => void
-  focusComment: () => void
+  focusComment: (id: number) => void
 
   state: {row: number}
   setState: (state: {row: number}) => void
@@ -93,11 +93,12 @@ export const Editor = compose(
       cancelComment: () => dispatch(cancelComment),
       createComment: text => dispatch(CreateComment(text)),
       editorChanged: editor => dispatch(EditorChanged(editor)),
+      focusComment: id => dispatch(FocusComment(id)),
     })
   )
 )(({
   comments, creatingComment, focusedComment, editor,
-  cancelComment, createComment, editorChanged,
+  cancelComment, createComment, editorChanged, focusComment,
   onRowChange, state: {row}, setState,
 }: InnerProps) =>
     <div className={styles('editor')}>
@@ -125,7 +126,8 @@ export const Editor = compose(
         {
           comments.map(comment =>
             <CommentBox comment={comment} key={comment.id}
-                        focused={focusedComment && comment.id === focusedComment.id} />
+                        focused={focusedComment && comment.id === focusedComment.id}
+                        handleFocus={() => focusComment(comment.id)} />
           )
         }
         {

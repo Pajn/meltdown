@@ -12,6 +12,7 @@ export const editorChanged: Action<{editor: EditorState}> = {type: 'editorChange
 export const startAddingComment: Action<{file: File}> = {type: 'startAddingComment'}
 export const cancelComment: Action<{}> = {type: 'cancelComment'}
 export const createComment: Action<{text: string}> = {type: 'createComment'}
+export const focusComment: Action<{id: number}> = {type: 'focusComment'}
 export const togglePreview: Action<{}> = {type: 'togglePreview'}
 
 export const EditorChanged = (editor: EditorState) => dispatch => {
@@ -20,3 +21,4 @@ export const EditorChanged = (editor: EditorState) => dispatch => {
 }
 export const StartAddingComment = (file: File) => withPayload(startAddingComment, {file})
 export const CreateComment = (text: string) => withPayload(createComment, {text})
+export const FocusComment = (id: number) => withPayload(focusComment, {id})

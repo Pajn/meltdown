@@ -2,7 +2,7 @@ import {ContentState, EditorState, SelectionState, CharacterMetadata, Entity} fr
 import {createReducer, updateIn} from 'redux-decorated'
 import {
   editorChanged, updateMarkdown,
-  startAddingComment, cancelComment, createComment,
+  startAddingComment, cancelComment, createComment, focusComment,
 } from '../../actions/document'
 import {modifyInlineStyle, updateStyles} from '../ui/editor-syntax-highlighting'
 import {Comment} from '../entities'
@@ -35,7 +35,7 @@ function getCurrentComment(selection: SelectionState, content: ContentState) {
   }
 }
 
-function focusComment(content: ContentState, comment: Comment, {focus}: {focus: boolean}) {
+function changeCommentFocus(content: ContentState, comment: Comment, {focus}: {focus: boolean}) {
   let block = content.getBlockForKey(comment.selection.getAnchorKey())
   let chars = block.getCharacterList()
 
@@ -67,10 +67,10 @@ function updateComments(state: DocumentState, editor: EditorState) {
       let updatedContent = content
 
       if (state.focusedComment) {
-        updatedContent = focusComment(updatedContent, state.focusedComment, {focus: false})
+        updatedContent = changeCommentFocus(updatedContent, state.focusedComment, {focus: false})
       }
 
-      updatedContent = focusComment(updatedContent, focusedComment, {focus: true})
+      updatedContent = changeCommentFocus(updatedContent, focusedComment, {focus: true})
 
       updatedState = Object.assign({}, state, {
         editor: EditorState.push(editor, updatedContent, 'change-inline-style'),
@@ -78,7 +78,7 @@ function updateComments(state: DocumentState, editor: EditorState) {
       })
     }
   } else if (state.focusedComment) {
-    const updatedContent = focusComment(content, state.focusedComment, {focus: false})
+    const updatedContent = changeCommentFocus(content, state.focusedComment, {focus: false})
     updatedState = Object.assign({}, state, {
       editor: EditorState.push(editor, updatedContent, 'change-inline-style'),
       focusedComment: null,
@@ -151,7 +151,16 @@ export const document = createReducer<DocumentState>(initialState)
     return Object.assign({}, state, {
       editor: EditorState.push(state.editor, content, 'apply-entity'),
       creatingComment: null,
-      focusedComment: comment,
       comments: [...state.comments, comment],
+    })
+  })
+  .when(focusComment, (state, {id}) => {
+    const comment = state.comments[id]
+    const content = state.editor.getCurrentContent()
+    const updatedContent = changeCommentFocus(content, comment, {focus: true})
+
+    return Object.assign({}, state, {
+      editor: EditorState.push(state.editor, updatedContent, 'change-inline-style'),
+      focusedComment: comment,
     })
   })
