@@ -157,7 +157,13 @@ export const document = createReducer<DocumentState>(initialState)
   .when(focusComment, (state, {id}) => {
     const comment = state.comments[id]
     const content = state.editor.getCurrentContent()
-    const updatedContent = changeCommentFocus(content, comment, {focus: true})
+    if (state.focusedComment === comment) return state
+
+    let updatedContent = changeCommentFocus(content, comment, {focus: true})
+
+    if (state.focusedComment) {
+      updatedContent = changeCommentFocus(updatedContent, state.focusedComment, {focus: false})
+    }
 
     return Object.assign({}, state, {
       editor: EditorState.push(state.editor, updatedContent, 'change-inline-style'),
