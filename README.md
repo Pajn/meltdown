@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/Pajn/meltdown.png?label=ready&title=Ready)](https://waffle.io/Pajn/meltdown)
 # Meltdown editor
 
 Why worry about style and format when typing your documents?
