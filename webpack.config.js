@@ -4,6 +4,21 @@ const path = require('path')
 const production = process.env.NODE_ENV === 'production'
 
 const babelPlugins = ['insert-css-module']
+const babelDevPlugins = babelPlugins.concat([
+  "react-transform", {
+    "transforms": [{
+      "transform": require.resolve("react-transform-hmr"),
+      "imports": ["react"],
+      "locals": ["module"]
+    }, {
+      "transform": require.resolve("react-transform-catch-errors"),
+      "imports": ["react", "redbox-react"]
+    }]
+    // by default we only look for `React.createClass` (and ES6 classes)
+    // but you can tell the plugin to look for different component factories:
+    // factoryMethods: ["React.createClass", "createClass"]
+  }
+])
 const babelProdPlugins = babelPlugins.concat(
   ['transform-react-constant-elements', 'transform-react-inline-elements']
 )

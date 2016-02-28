@@ -1,13 +1,14 @@
-import {convertFromRaw, convertToRaw, ContentState} from 'draft-js'
+import {convertFromRaw, convertToRaw, ContentState, SelectionState} from 'draft-js'
 import css from 'insert-css-module'
 import debounce from 'lodash/debounce'
 import * as React from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import {compose} from 'redux'
-import withState from 'recompose/withState'
-import {togglePreview} from '../actions/document'
+import {StartAddingComment, togglePreview} from '../actions/document'
+import {DocumentState} from '../lib/reducers/document'
 import {scrollTo} from '../lib/ui/scroll'
+import {File} from '../lib/entities'
 import {getUrl} from '../lib/file-tools'
 import {Editor} from './editor'
 import {Panel, Whitespace} from './panel'
@@ -44,38 +45,75 @@ const styles = css`
   }
 `
 
-const save = debounce(content => {
-  localStorage.setItem('content', JSON.stringify(convertToRaw(content)))
-}, 1000)
-
-const initialContent = (() => {
-  const stored = JSON.parse(localStorage.getItem('content'))
-  if (!stored) return
-
-  return ContentState.createFromBlockArray(convertFromRaw(stored))
-})()
-
-const initialState = initialContent
-    ? initialContent.getPlainText()
-    : ''
-
 type Properties = {
   file: File
 }
 
-export const Document = compose(
-  withState('markdown', 'setMarkdown', initialState),
-  connect(
-    (state, props) => ({showPreview: state.editorSettings.showPreview}),
-    dispatch => ({togglePreview: () => dispatch(togglePreview)})
-  )
-)(({file: {path}, markdown, setMarkdown, showPreview, togglePreview}) => {
+type State = {
+  file: File
+  content: ContentState
+  selection: SelectionState
+  markdown: string
+  creatingComment: boolean
+}
+
+type InnerProps = Properties & {
+  state: State
+  dispatch: (action) => void
+  document: DocumentState
+  showPreview: boolean
+  togglePreview: () => void
+  startAddingComment: () => void
+}
+
+const parseContent = compose(
+  ContentState.createFromBlockArray,
+  convertFromRaw,
+  JSON.parse
+)
+
+const getKey = ({path, slug}: File) => `file: ${path.join('/')}/${slug}`
+
+const saveContent = debounce((file, content) => {
+  localStorage.setItem(
+    getKey(file),
+    JSON.stringify(convertToRaw(content)))
+}, 1000)
+
+const initialState = ({file}: Properties) => {
+  const stored = localStorage.getItem(getKey(file))
+  if (!stored) {
+    return {content: null, markdown: '', file}
+  }
+
+  const content = parseContent(stored)
+  const markdown = content.getPlainText()
+
+  return {content, markdown, file}
+}
+
+export const Document = connect(
+  state => ({
+    document: state.document,
+    showPreview: state.editorSettings.showPreview,
+  }),
+  (dispatch, {file}) => ({
+    startAddingComment: () => dispatch(StartAddingComment(file)),
+    togglePreview: () => dispatch(togglePreview),
+  })
+)<Properties>(({
+  file: {path}, document, showPreview,
+  startAddingComment, togglePreview,
+}: InnerProps) => {
   let preview
 
   return (
     <div className={styles('container')}>
       <Panel>
         <Link to={getUrl(path)}>Back</Link>
+        <button onClick={startAddingComment}>
+          Comment
+        </button>
         <Whitespace />
         <button onClick={togglePreview}>
           Toggle Preview
@@ -83,16 +121,12 @@ export const Document = compose(
       </Panel>
       <div className={styles('editing-container')}>
         <div className={styles('flex')}>
-          <Editor initialContent={initialContent} onRowChange={row => scrollTo(row, preview)}
-                  onChange={content => {
-                    setMarkdown(content.getPlainText())
-                    save(content)
-                  }} />
+          <Editor onRowChange={row => scrollTo(row, preview)} />
         </div>
         {
           showPreview &&
           <div className={styles('flex')} ref={element => preview = element}>
-            <Preview markdown={markdown} />
+            <Preview markdown={document.markdown} />
           </div>
         }
       </div>

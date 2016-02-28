@@ -1,3 +1,12 @@
+import {SelectionState} from 'draft-js'
+
+export type Comment = {
+  id: number
+  entityKey: string
+  selection: SelectionState
+  text: string
+}
+
 export type File = {
   path: string[]
   name: string

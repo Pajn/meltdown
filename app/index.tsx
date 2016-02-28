@@ -2,7 +2,6 @@ import * as React from 'react'
 import {render} from 'react-dom'
 import {Provider} from 'react-redux'
 import {hashHistory, IndexRoute, Router, Route} from 'react-router'
-import {Document} from './components/document'
 import {FileOrDirectory} from './components/file'
 import {store} from './lib/store'
 

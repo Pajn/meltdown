@@ -101,3 +101,26 @@ export function updateStyles(editor: EditorState) {
 
   return editor
 }
+
+export function getCurrentRow(content: ContentState, selection: SelectionState) {
+  let currentRow = 1
+  let key = selection.getFocusKey()
+  while (key = content.getKeyBefore(key)) {
+    currentRow++
+  }
+  return currentRow
+}
+
+export function modifyInlineStyle(
+  editor: EditorState, selection: SelectionState, {apply, remove}: {apply?: string, remove?: string}
+) {
+  let content = editor.getCurrentContent()
+  if (remove) {
+    content = Modifier.removeInlineStyle(content, selection, remove)
+  }
+  if (apply) {
+    content = Modifier.applyInlineStyle(content, selection, apply)
+  }
+
+  return EditorState.push(editor, content, 'change-inline-style')
+}

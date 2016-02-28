@@ -6,6 +6,34 @@ declare module 'recompose/_types' {
   }
 }
 
+declare module 'recompose/withReducer' {
+  import {ComponentClass} from 'recompose/_types'
+
+  function withReducer<P, S>(
+    stateName: string,
+    dispatchName: string,
+    reducer: (state: S, action) => S,
+    initialState: any,
+    BaseComponent: (props: P) => JSX.Element
+  ): ComponentClass<P>
+
+  function withReducer<S>(
+    stateName: string,
+    dispatchName: string,
+    reducer: (state: S, action) => S,
+    initialState: any
+  ): <P>(BaseComponent: (props: P) => JSX.Element) => ComponentClass<P>
+
+  function withReducer<P, S>(
+    stateName: string,
+    dispatchName: string,
+    reducer: (state: S, action) => S,
+    initialState: any
+  ): (BaseComponent: (props: P) => JSX.Element) => ComponentClass<P>
+
+  export default withReducer
+}
+
 declare module 'recompose/withState' {
   import {ComponentClass} from 'recompose/_types'
 

@@ -5,6 +5,22 @@ import {getFile} from '../lib/file-tools'
 import {Directory} from './directory'
 import {Document} from './document'
 
+function getPath(routeParams) {
+  let path = []
+  if (routeParams.path) {
+    path.push(routeParams.path)
+  }
+  if (routeParams.splat) {
+    const parts = routeParams.splat.split('/')
+    for (const part of parts) {
+      if (part) {
+        path.push(part)
+      }
+    }
+  }
+  return path
+}
+
 type Properties = {
   path: string[]
   file?: File
@@ -12,20 +28,8 @@ type Properties = {
 
 export const FileOrDirectory = connect(
   ({files}, {params}) => {
-    let path = []
-    if (params.path) {
-      path.push(params.path)
-      console.log(params.splat)
-    }
-    if (params.splat) {
-      const parts = params.splat.split('/')
-      for (const part of parts) {
-        if (part) {
-          path.push(part)
-        }
-      }
-    }
-    return {file: (path && getFile(files, path)) || files}
+    const path = getPath(params)
+    return {file: getFile(files, path) || files}
   }
 )(({file}: Properties) => file.files
   ? <Directory directory={file} />

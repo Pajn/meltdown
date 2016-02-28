@@ -17,7 +17,7 @@ export function action(type: string, payloadDescription?, creator?: Function) {
   const finalCreator = (payload, ...args) => {
     const action = {type}
     if (creator) {
-      Object.assign(action, {payload: creator(...args)})
+      Object.assign(action, {payload: creator(payload, ...args)})
     } else if (typeof payload === 'object' && payload) {
       Object.assign(action, {payload})
     }
@@ -30,4 +30,8 @@ export function action(type: string, payloadDescription?, creator?: Function) {
 
 export function append<T>(element: T) {
   return (state: T[]) => [...state, element]
+}
+
+export function withPayload<P>(action: Action<P>, payload: P) {
+  return Object.assign({}, action, {payload})
 }

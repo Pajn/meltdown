@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {ul} from 'react-hyperscript-helpers'
 import {Link} from 'react-router'
-import {Directory as DirectoryEntity, File} from '../lib/entities'
+import {Directory as DirectoryEntity} from '../lib/entities'
 import {getUrl} from '../lib/file-tools'
 
 type Properties = {
