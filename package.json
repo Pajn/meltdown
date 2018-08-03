@@ -66,7 +66,7 @@
     "draft-js": "^0.1.0",
     "lodash": "^4.5.1",
     "react": "^0.14.2",
-    "react-dom": "^0.14.2",
+    "react-dom": "^16.0.1",
     "react-hyperscript-helpers": "^1.0.1",
     "react-markdown": "^2.0.1",
     "react-redux": "^4.4.0",
